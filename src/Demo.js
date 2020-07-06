@@ -12,21 +12,26 @@ Maybe reader will have a fakeresults={obj} pref
 import React from 'react';
 import {connect} from 'react-redux';
 import PrefSelector from './PrefSelector';
+import Reader from './Reader';
 
 class Demo extends React.Component{
 	constructor(props) {
 		super(props);
 	}
 	render() {
+		// we need a key prop for PrefSelector that changes whenever its props will change
+		// and forces it to re-run the constructor.
+		let langs = this.props.prefs.home+this.props.prefs.learning;
 		return (
 			<div>
-				<PrefSelector />
+				<PrefSelector key={langs}/>
+				<Reader />
 			</div>);
 	}
 }
 let mstp = state => {
 	return {
-		state:state,
+		prefs:state.prefs,
 	};
 }
 export default connect(mstp)(Demo);

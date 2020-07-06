@@ -20,7 +20,7 @@ function mainReducer(state, action) {
 			}
 			return {...state, prefs:action.payload};
 		default:
-			return state
+			return state;
 	}
 }
 function defaultState() {

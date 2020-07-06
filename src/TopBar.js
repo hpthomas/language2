@@ -1,3 +1,6 @@
+/* NAV BAR AND PARENT OF EVERYTHING 
+this has all the routes and such too
+*/
 import React from 'react';
 import {connect} from 'react-redux';
 import {Link, Route} from 'react-router-dom';

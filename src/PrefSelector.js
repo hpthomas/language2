@@ -1,9 +1,16 @@
+/* Preference Selector 
+I speak ___
+I'm learning ___ 
+with dropdowns for languages.
+*/
 import React from 'react';
 import {connect} from 'react-redux';
 import languages from './Languages';
 import store from './store';
 class PrefSelector extends React.Component{
 	constructor(props) {
+		console.log('constructing');
+		console.log(props.prefs);
 		super(props);
 		this.state = {home:props.prefs.home, learning:props.prefs.learning, invalid:false};
 	}
@@ -26,9 +33,9 @@ class PrefSelector extends React.Component{
 			<div>
 				<div>
 					<label> I speak:</label>
-					<select value={this.props.prefs.home} onChange={this.change.bind(this)} className="" name="home">
+					<select value={this.state.home} onChange={this.change.bind(this)} className="" name="home">
 						{languages.map((lang,i) =>  (
-							<option key={i} value={lang.abbr} selected={lang.abbr==this.state.home}>
+							<option key={i} value={lang.abbr} >
 								 	{lang.full}
 						 	</option>)
 						)}
@@ -37,11 +44,10 @@ class PrefSelector extends React.Component{
 
 				<div>
 					<label> I'm learning:</label>
-					<select value={this.props.prefs.learning} onChange={this.change.bind(this)} className="" name="learning">
+					<select value={this.state.learning} onChange={this.change.bind(this)} className="" name="learning">
 						{languages.map((lang,i) =>  (
 							<option key={i} value={lang.abbr}>
 								 	{lang.full}
-								 	{console.log(lang,i,this.state.learning)}
 						 	</option>)
 						)}
 					</select>

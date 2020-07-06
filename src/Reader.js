@@ -1,6 +1,22 @@
-/* READER PAGE
+/* READER 
 Users read.
 */
 import React from 'react';
-let Reader = (props) => <div>hi</div>;
+import Demo from './Demo';
+import {connect} from 'react-redux';
+
+class Reader extends React.Component{
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		return (
+		<div>
+			<div>
+				Read about 
+			</div>
+			
+		</div>);
+	}
+}
 export default Reader;
