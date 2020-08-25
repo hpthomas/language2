@@ -9,8 +9,6 @@ import languages from './Languages';
 import store from './store';
 class PrefSelector extends React.Component{
 	constructor(props) {
-		console.log('constructing');
-		console.log(props.prefs);
 		super(props);
 		this.state = {home:props.prefs.home, learning:props.prefs.learning, invalid:false};
 	}

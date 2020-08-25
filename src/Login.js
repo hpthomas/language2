@@ -42,7 +42,7 @@ class LoginForm extends React.Component {
 		</div>);
 	}
 }
-let mapStateToProps = function(state) {return {...state}};
+let mapStateToProps = (state) => ({firebase:state.firebase});
 let Connected = connect(mapStateToProps)(LoginForm);
 const Login = withRouter(Connected);
 export default Login;

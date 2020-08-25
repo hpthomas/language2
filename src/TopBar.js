@@ -10,6 +10,7 @@ import About from './About';
 import Login from './Login';
 import Signup from './Signup';
 import ReaderPage from './ReaderPage';
+import AdminWikiTools from './wikiTools/AdminWikiTools';
 import store from './store';
 class TopBar extends React.Component{
 
@@ -48,13 +49,22 @@ class TopBar extends React.Component{
 								</Link>
 							</li>
 
+							{ this.props.user && this.props.user.uid=='Gw83uZdDAQZD9Evc38RPN1vwp0u2'?
+								<li className='about_top_link'>
+									<Link to={'/wikitools'}>
+										Wiki Tools	
+									</Link>
+								</li>
+								:null
+							}
+
 						</ul>
 					</div>
 					<div className="menu-list-right">
 						<ul>
 							<li>
 								{this.props.user? 
-									<Link to={'/user/'+this.props.uid}>{this.props.user.email||'anonymous'}</Link>
+									<Link to={'/user/'+this.props.user.uid}>{this.props.user.email||'anonymous'}</Link>
 									:<Link to='/signup'>Register</Link>
 								}
 							</li>
@@ -70,7 +80,7 @@ class TopBar extends React.Component{
 				<Route path='/about' component = {About} />
 				<Route path='/read' component = {ReaderPage} />
 				<Route path='/login' component = {Login} />
-				<Route path='/signup' component = {Signup} />
+				<Route path='/wikitools' component = {AdminWikiTools} />
 				<Route path='/user/:user' component = {UserPage} />
 			</div>);
 	}

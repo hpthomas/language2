@@ -76,6 +76,12 @@ class Firebase {
 		let params = {text: text, source:source, target:target};
 		return this.functions.httpsCallable('translate')(params);
 	}
+	setArticleRecs = (newRecs) => {
+		this.db.ref('/article_recs').update(newRecs);
+	}
+	getArticleRecs = (lang) => {
+		return this.db.ref('/article_recs/' + lang).once('value');
+	}
 }
 
 export default Firebase;
