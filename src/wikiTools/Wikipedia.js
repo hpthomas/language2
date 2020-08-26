@@ -18,6 +18,7 @@ class Wikipedia {
 	    var url = "https://" + lang 
 	    + ".wikipedia.org/w/api.php?action=query&prop=extracts&format=json&origin=*&titles="
 	    + term;
+	    console.log(url);
 	    return fetch(url);
 	}
 

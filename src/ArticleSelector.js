@@ -5,25 +5,24 @@ User types in their home lang and the corresponding suggestion is displayed in t
 */
 import React from 'react';
 import {connect} from 'react-redux';
+import Wikipedia from './wikiTools/Wikipedia';
+import ArticleReader from './ArticleReader';
 
 class ArticleSelector extends React.Component{
 	constructor(props) {
 		super(props);
 		let suggestions = {};
-		this.state = {homeSearch:"",learningSearch:"",suggestions:{}}
+		this.state = {homeSearch:"",learningSearch:"",suggestions:{},results:null}
 	}
 	componentDidUpdate(a) {
-		console.log('did update');
 		if (this.props.prefs) {
 			let home = this.props.prefs.home;
 			let learning = this.props.prefs.learning;
 			if (!this.state.suggestions[home] || !this.state.suggestions[learning]) {
-				console.log('getting for',this.props.prefs,home,learning)
-				console.log('(already have:)',this.state.suggestions);
 				this.getRecs(home, learning);
 			}
 			else {
-				console.log('nothing to do')
+				//nothing to do
 			}
 		}
 	}
@@ -50,7 +49,6 @@ class ArticleSelector extends React.Component{
 	}
 
 	change(event) {
-		console.log('a change');
 		this.setState({[event.target.name]:event.target.value});
 		let lang;
 		if (event.target.name == 'homeSearch') {
@@ -80,7 +78,11 @@ class ArticleSelector extends React.Component{
 			guess = guess.substring(0,guess.length-1);
 		}
 		console.log(results);
-
+	}
+	searchWiki() {
+		let term = this.state.learningSearch;
+        Wikipedia.getWikiArray(term, this.props.prefs.learning)
+            .then(arr => this.setState({results: arr}));
 	}
 	render() {
 		if (!this.props.prefs) return <div>I don't know what languages you're working with!</div>;
@@ -94,13 +96,16 @@ class ArticleSelector extends React.Component{
 				className='search_input' 
 				name='homeSearch' 
 				type='text' />
-				<input 
+
+				<input
 				value={this.state.learningSearch}
 				onChange={this.change.bind(this)} 
 				className='search_input' 
 				name='learningSearch' 
 				type='text' />
 			</div>
+			<button onClick={this.searchWiki.bind(this)}>go</button>
+			<ArticleReader items = {this.state.results} />
 		</div>);
 	}
 }
