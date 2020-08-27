@@ -39,11 +39,6 @@ class TopBar extends React.Component{
 								</Link>
 							</li>
 							<li className='about_top_link'>
-								<Link to={'/read'}>
-									Read
-								</Link>
-							</li>
-							<li className='about_top_link'>
 								<Link to={'/about'}>
 									About	
 								</Link>
@@ -80,6 +75,7 @@ class TopBar extends React.Component{
 				<Route path='/about' component = {About} />
 				<Route path='/read' component = {ReaderPage} />
 				<Route path='/login' component = {Login} />
+				<Route path='/signup' component = {Signup} />
 				<Route path='/wikitools' component = {AdminWikiTools} />
 				<Route path='/user/:user' component = {UserPage} />
 			</div>);
