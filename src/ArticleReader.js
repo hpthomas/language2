@@ -13,9 +13,9 @@ class ArticleReader extends React.Component{
 	render() {
 		return (!this.props.items)? null : 
 		( 
-			<ul className="list-group">
+			<ul className="">
 			{this.props.items.map((item,index) => 
-				<li key={index} className="list-group-item">
+				<li key={index} className="">
 					<WikiSectionReader prefs={this.props.prefs} data={item} />
 				</li>
 			)}

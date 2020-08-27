@@ -1,8 +1,32 @@
-.gridParent{
-  display:grid;
-  grid-template-columns: 60% 40%;
+ul {
+  list-style:none;
 }
 
+.article_links {
+  display:flex;
+  flex-direction:row;
+}
+.article_links li {
+  margin-right: 12px;
+}
+.reader-list {
+}
+.reader-item {
+  display:flex;
+  align-items: center;
+}
+.reader-main {
+  width:400px;
+}
+.reader-translate-button {
+  width:120px;
+}
+.reader-translate-button button {
+  width:100px;
+}
+.reader-translation {
+  width:400px;
+}
 .adminWikiTools {
   font-size:0.9em;
   font-family: sans-serif;

@@ -9,32 +9,44 @@ class WikiSectionReader extends React.Component {
 
 	translate(event) {
 		this.setState({showTranslation: !this.state.showTranslation});
-		let msg = "Please log in to view translations. If you are already logged in, this is an error.";
-		this.props.firebase.translate(this.props.data.text, this.props.prefs.src,this.props.prefs.target)
-		.then(t=>JSON.parse(t.data))
-		.then(t => t['text'][0])
-		.then(t => {
+		this.props.firebase.translate(this.props.data.text, this.props.prefs.learning,this.props.prefs.home)
+		.then(response => response.data)
+		.then(t=>{
+			if (t.err) {
+				throw t.err;
+			}
 			this.setState({cachedTranslation: t});
 		})
 		.catch(error=>{
-			console.log("translation error");
-			console.log(error);
-			this.setState({cachedTranslation: msg});
+			if (error == 'quota reached') {
+				let msg = "The translation quota has been exceeded for the month.";
+				this.setState({cachedTranslation: msg});
+			}
+			else if (error == 'not authenticated'){
+				let msg = "Please log in to view translations. If you are already logged in, this is an error.";
+				this.setState({cachedTranslation: msg});
+			}
+			else {
+				console.log('unknown error');
+				console.log(error);
+				let msg = "Error fetching translation";
+				this.setState({cachedTranslation: msg});
+			}
 		})
 	}
 	render() {
 		let Tag = `${this.props.data.tag.toLowerCase()}`;
 		return (
-			<div className="row">
-				<div className="col-6">
+			<div className="reader-item">
+				<div className="reader-main">
 					<Tag>{this.props.data.text}</Tag>
 				</div>
-				<div className="col-1">
+				<div className="reader-translate-button">
 					<button onClick={this.translate.bind(this)}>
 						{this.state.showTranslation? "hide" : "translate"}
 					</button>
 				</div>
-				<div className="col-4">
+				<div className="reader-translation">
 					{
 						(!this.state.showTranslation)? null 
 						: (this.state.cachedTranslation || "fetching... ")

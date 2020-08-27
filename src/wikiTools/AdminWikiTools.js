@@ -33,7 +33,6 @@ class AdminWikiTools extends React.Component {
 		    catch (error) {
 		    	return null;
 		    }
-		    return null;
 		}))
 		.then(langdata=>{
 			let articles = this.state.articles.slice(0);

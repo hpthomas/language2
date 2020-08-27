@@ -73,6 +73,7 @@ class Firebase {
 		prefs.update(newPrefs);
 	}
 	translate = (text, source, target) => {
+		console.log(text,source,target);
 		let params = {text: text, source:source, target:target};
 		return this.functions.httpsCallable('translate')(params);
 	}
