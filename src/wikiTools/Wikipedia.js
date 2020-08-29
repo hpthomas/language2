@@ -78,9 +78,12 @@ class Wikipedia {
 			}
 		})
 
-		// regex to strip out all [###] 
-		let text = element.innerText.replace(/(\[\d+\])/g,'');
-		return text;;
+		// regex to strip out all [###]: s.replace(/(\[\d+\])/g,'');
+
+		let text = element.innerText;
+		// regex matches anything between brackes non-greedily
+		let re = /\[(.*?)\]/g;
+		return text.replace(re,'');
 	}
 
 	// the reponse to action=parse is the html contents of the page

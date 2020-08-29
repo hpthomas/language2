@@ -47,7 +47,6 @@ class WikiSectionReader extends React.Component {
 		})
 	}
 	markDone(event){
-		console.log('set to done');
 		this.props.updateStatus('done');
 		this.setState({status:'done'});
 	}

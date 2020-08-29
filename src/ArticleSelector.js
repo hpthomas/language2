@@ -31,7 +31,6 @@ class ArticleSelector extends React.Component{
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		console.log('update to selector');
 		if (this.props.prefs != prevProps.prefs){
 			let home = this.props.prefs.home;
 			let away = this.props.prefs.away;
