@@ -1,40 +1,76 @@
+import {connect} from 'react-redux';
 class Wikipedia {
+	constructor(firebase) {
+		this.firebase=firebase;
+	}
 
 	// for now, assumes term is in English
-	static getLangAvails(term) {
+	getLangAvails(term) {
 		let url = "https://en.wikipedia.org/w/api.php?action=query&prop=langlinks&lllimit=500&format=json&origin=*"
 		  + "&titles=" + encodeURIComponent(term);
 		  return fetch(url);
 	}
 
-	static getWikiArray(term, lang) {
+	getWikiArray(term, lang) {
 		return this.searchWiki(term, lang)
 		.then(response=>response.json())
 		.then(res=>this.parseWikiResponse(res));
 	}
 
-	static searchWiki(term, lang) {
-	    //CHECK FIREBASE FOR KNOWN IN-USE REVISION
-	    //IF NOT PRESENT
-	    	//GET ID FOR CURRENT REVISION
-	    	//SAVE THAT IN FIREBASE
-	    //GET THAT REVISION
+	// finds current revision ID for a wiki page
+	// sets it on firebase, returns promise resolving to revID
+	findAndSetCurrentRevision(term, lang) {
 	    var url = "https://" + lang 
 	    + ".wikipedia.org/w/api.php?"
-	    	+ "action=parse"
-	    	+ "&prop=text"
+	    	+ "action=query"
+	    	+ "&prop=revisions"
 	    	+ "&format=json"
 	    	+ "&formatversion=2"
 	    	+ "&origin=*"
-	    	+ "&page="
+	    	+ "&titles="
 		    + term;
-	    return fetch(url);
+		return fetch(url)
+		.then(res=>res.json())
+		.then(revisions=>{
+			let revision = revisions.query.pages[0].revisions[0].revid;
+			// set on firebase but don't wait for results
+			this.firebase.setArticleRevision(term, lang, revision);
+			return revision;
+		})
+		.catch(err=>{
+			console.log('no revision found for ' + term + ','+ lang);
+			console.log(err)
+		})
+	}
+	searchWiki(term, lang) {
+		return this.firebase.getArticleRevision(term,lang)
+		.then(res=>res.val())
+		.then(revisionID=>{
+			if (revisionID) {
+				return revisionID;
+			}
+			else {
+				return this.findAndSetCurrentRevision(term, lang);
+			}
+		})
+		.then(revisionID=>{
+		    var url = "https://" + lang 
+		    + ".wikipedia.org/w/api.php?"
+		    	+ "action=parse"
+		    	+ "&prop=text"
+		    	+ "&format=json"
+		    	+ "&formatversion=2"
+		    	+ "&origin=*"
+			    + "&oldid="
+			    + revisionID;
+		    return fetch(url);
+		});
 	}
 
 	// Returns text of an article section cleaned-up
 	// given a dom element made from Wikiedia's text
 	// right now this just strips unprintable 'style' tags
-	static getCleanText(element) {
+	getCleanText(element) {
 		let children = element.children;
 		Array.from(children).forEach(childElement => {
 			if (childElement.nodeName.toLowerCase() == 'style') {
@@ -50,7 +86,7 @@ class Wikipedia {
 	// the reponse to action=parse is the html contents of the page
 	// easier to deal with than WikiText
 	// TODO this is hard coded & inflexible, but mediaWiki should be stable
-	static parseWikiResponse(response) {
+	parseWikiResponse(response) {
 		try {
 			let wiki_html = response.parse.text;
 			var doc = new DOMParser().parseFromString(wiki_html,'text/html');

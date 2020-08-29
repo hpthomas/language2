@@ -1,5 +1,6 @@
 import { createStore } from 'redux';
 import Firebase from './Firebase';
+import Wikipedia from './wikiTools/Wikipedia';
 
 let defaultPrefs = {home:"en",away:"es"};
 
@@ -10,9 +11,7 @@ function mainReducer(state, action) {
 		case 'LOGGED_OUT':
 			return {...state, user:null}
 		case 'GOT_PREFS':
-			console.log('got prefs');
 			if (!action.payload || !action.payload.home || !action.payload.away) {
-				console.log('BAD ONES!');
 				// we've got invalid prefs! this is fine
 				// they were set in old version with different names, or I deleted the database
 				state.firebase.setPrefs(defaultPrefs);
@@ -24,10 +23,13 @@ function mainReducer(state, action) {
 	}
 }
 function defaultState() {
+	let firebase = new Firebase();
+	let wikipedia = new Wikipedia(firebase);
 	return {
 		user: null,
 		prefs: defaultPrefs,
-		firebase: new Firebase()
+		firebase: firebase,
+		wikipedia: wikipedia
 	}
 }
 export default createStore(

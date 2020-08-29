@@ -13,7 +13,25 @@ ul {
 }
 .reader-item {
   display:flex;
-  align-items: center;
+  align-items: stretch
+}
+.reader-item > div {
+  display:flex;
+  align-items:center;
+}
+.done { 
+  background-color:#90ee90;
+}
+.translated {
+  background-color:yellow;
+}
+.no-status {
+  background-color:#87cefa;
+}
+.reader-status {
+  justify-content:center;
+  margin-right:20px;
+  width:100px;
 }
 .reader-main {
   width:400px;

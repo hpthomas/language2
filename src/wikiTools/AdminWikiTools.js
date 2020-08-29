@@ -1,7 +1,6 @@
 import React from 'react';
 import {v4 as uuid} from 'uuid';
 import {topArticles} from './topArticles';
-import Wikipedia from './Wikipedia';
 import LinkSelector from '../LinkSelector';
 import {connect} from 'react-redux';
 
@@ -25,7 +24,7 @@ class AdminWikiTools extends React.Component {
 	// This is where we request wikipedia languages and parse the results
 	// TODO why did I do this in componentDidMount....;
 	componentDidMount() {
-		let promises = this.state.articles.map(link=>Wikipedia.getLangAvails(link.name).then(res=>res.json()));
+		let promises = this.state.articles.map(link=>this.props.wikipedia.getLangAvails(link.name).then(res=>res.json()));
 		Promise.all(promises)
 		.then(responses=>responses.map(response=>{
 		    try {
@@ -146,7 +145,7 @@ let LinkToArticle = (props) => {
 	return <a href={url}>{props.lang}</a>
 }
 
-let mstp = (state) => ({firebase:state.firebase});
+let mstp = (state) => ({firebase:state.firebase, wikipedia:state.wikipedia});
 export default connect(mstp)(AdminWikiTools);
 
 

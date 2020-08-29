@@ -9,7 +9,6 @@ TODO:
 
 import React from 'react';
 import {connect} from 'react-redux';
-import Wikipedia from './wikiTools/Wikipedia';
 import ArticleReader from './ArticleReader';
 import {v4 as uuid} from 'uuid';
 import {abbrToName} from './Languages';
@@ -23,20 +22,21 @@ class ArticleSelector extends React.Component{
 			awaySearch:"",
 			suggestions:[],
 			available_articles:{},
-			results:null,
-			both_lang_suggestions:false
+			both_lang_suggestions:false,
+			finalTerm: null
 		}
 	}
 	toggleBothLangs() {
 		this.setState({both_lang_suggestions: !this.state.both_lang_suggestions})
 	}
-	componentDidUpdate(a) {
-		if (this.props.prefs){
+
+	componentDidUpdate(prevProps, prevState) {
+		console.log('update to selector');
+		if (this.props.prefs != prevProps.prefs){
 			let home = this.props.prefs.home;
 			let away = this.props.prefs.away;
+			this.setState({homeSearch:'',awaySearch:'',suggestions:'', finalTerm:null})
 			if (!this.state.available_articles[home] || !this.state.available_articles[away]) {
-				// TODO we might already have one, don't need to fetch both every time
-				// but this rarely runs
 				this.getRecs(home, away);
 			}
 		}
@@ -105,8 +105,7 @@ class ArticleSelector extends React.Component{
 		if (!term) {
 			term = this.state.awaySearch;
 		}
-        Wikipedia.getWikiArray(term, this.props.prefs.away)
-            .then(arr => this.setState({results: arr}));
+		this.setState({finalTerm:term})
 	}
 	readerLink(away, home) {
 		let linkContent = away;
@@ -122,7 +121,7 @@ class ArticleSelector extends React.Component{
 		if (!suggestions || suggestions.length < 1) {
 			// there are no suggestions - user has not searched anything
 			// TODO show most popular articles, or random choices
-			return this.readerLink('chicago')
+			return this.readerLink('Chicago')
 		}
 		let link_count = 5;
 		let titles = suggestions.slice(0,link_count);
@@ -172,9 +171,9 @@ class ArticleSelector extends React.Component{
 			</div>
 
 			{this.getReaderLinks()}
-			<ArticleReader items = {this.state.results} />
+			<ArticleReader term = {this.state.finalTerm} />
 		</div>);
 	}
 }
-let mstp = (state) => ({prefs:state.prefs, firebase:state.firebase});
+let mstp = (state) => ({prefs:state.prefs, firebase:state.firebase, wikipedia:state.wikipedia});
 export default connect(mstp)(ArticleSelector);

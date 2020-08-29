@@ -4,11 +4,23 @@ import {connect} from 'react-redux';
 class WikiSectionReader extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {cachedTranslation: null, showTranslation:false};
+		this.state = {cachedTranslation: null, showTranslation:false, status:props.status};
 	}
 
-	translate(event) {
-		this.setState({showTranslation: !this.state.showTranslation});
+	toggleTranslate(event) {
+		// we only need to fetch translation, etc. if we're showing, not if we're hiding
+		if (this.state.showTranslation) {
+			this.setState({showTranslation:false});
+			return;
+		}
+		this.setState({showTranslation: true});
+		this.props.updateStatus('translated');
+		this.setState({status:'translated'});
+		if (!this.state.cachedTranslation) {
+			this.translate();
+		}
+	}
+	translate() {
 		this.props.firebase.translate(this.props.data.text, this.props.prefs.away,this.props.prefs.home)
 		.then(response => response.data)
 		.then(t=>{
@@ -34,16 +46,27 @@ class WikiSectionReader extends React.Component {
 			}
 		})
 	}
+	markDone(event){
+		console.log('set to done');
+		this.props.updateStatus('done');
+		this.setState({status:'done'});
+	}
 	render() {
 		let Tag = `${this.props.data.tag.toLowerCase()}`;
 		return (
-			<div className="reader-item">
+			<div className={"reader-item"}>
+				<div className={"reader-status " + (this.state.status || "no-status")}>
+					{this.state.status || ""}
+				</div>
 				<div className="reader-main">
 					<Tag>{this.props.data.text}</Tag>
 				</div>
 				<div className="reader-translate-button">
-					<button onClick={this.translate.bind(this)}>
+					<button onClick={this.toggleTranslate.bind(this)}>
 						{this.state.showTranslation? "hide" : "translate"}
+					</button>
+					<button onClick={this.markDone.bind(this)}>
+						Done
 					</button>
 				</div>
 				<div className="reader-translation">

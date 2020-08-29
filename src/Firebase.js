@@ -81,6 +81,26 @@ class Firebase {
 	getArticleRecs = (lang) => {
 		return this.db.ref('/article_recs/' + lang).once('value');
 	}
+	getArticleRevision = (term, lang) => {
+		return this.db.ref('/article_revisions/' + lang + '/' + term).once('value')
+		.then(thing=>{
+			return thing;
+		})
+	}
+	setArticleRevision = (term, lang, revision) => {
+		let update = {[term]:revision};
+		return this.db.ref('/article_revisions/' + lang).update(update);
+	}
+
+	getUserArticleHistory = (term,lang) => {
+		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + term;
+		return this.db.ref(path).once('value');
+	}
+	setUserArticleHistorySection(term, lang, sectionIndex, status) {
+		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + term;
+		let update = {[sectionIndex]:status};
+		return this.db.ref(path).update(update);
+	}
 }
 
 export default Firebase;
