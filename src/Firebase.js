@@ -82,25 +82,35 @@ class Firebase {
 		return this.db.ref('/article_recs/' + lang).once('value');
 	}
 	getArticleRevision = (term, lang) => {
-		return this.db.ref('/article_revisions/' + lang + '/' + term).once('value')
+		let safe_name = this.makeKeySafeName(term);
+		return this.db.ref('/article_revisions/' + lang + '/' + safe_name).once('value')
 		.then(thing=>{
 			return thing;
 		})
 	}
 	setArticleRevision = (term, lang, revision) => {
-		let update = {[term]:revision};
+		let safe_name = this.makeKeySafeName(term);
+		let update = {[safe_name]:revision};
+		console.log('set')
+		console.log(update);
 		return this.db.ref('/article_revisions/' + lang).update(update);
 	}
 
 	getUserArticleHistory = (term,lang) => {
-		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + term;
+		let safe_name = this.makeKeySafeName(term);
+		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + safe_name;
 		return this.db.ref(path).once('value');
 	}
 	setUserArticleHistorySection(term, lang, sectionIndex, status) {
-		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + term;
+		let safe_name = this.makeKeySafeName(term);
+		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + safe_name;
 		let update = {[sectionIndex]:status};
 		return this.db.ref(path).update(update);
 	}
+	makeKeySafeName(term) {
+		// strip out dot, hash, dollar, brackets 
+ 		let re =  /(\.|\$|\[|\]|\#)/g ;
+		return term.replace(re,'');
+	}
 }
-
 export default Firebase;
