@@ -22,7 +22,6 @@ class SignupForm extends React.Component {
 		this.setState({[event.target.name]:event.target.value});
 	}
 	render() {
-		console.log('hi?')
 		return (
 		<div className="">
 			<div className="">

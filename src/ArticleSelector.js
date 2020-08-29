@@ -20,7 +20,7 @@ class ArticleSelector extends React.Component{
 		let available_articles = {};
 		this.state = {
 			homeSearch:"",
-			learningSearch:"",
+			awaySearch:"",
 			suggestions:[],
 			available_articles:{},
 			results:null,
@@ -33,11 +33,11 @@ class ArticleSelector extends React.Component{
 	componentDidUpdate(a) {
 		if (this.props.prefs){
 			let home = this.props.prefs.home;
-			let learning = this.props.prefs.learning;
-			if (!this.state.available_articles[home] || !this.state.available_articles[learning]) {
+			let away = this.props.prefs.away;
+			if (!this.state.available_articles[home] || !this.state.available_articles[away]) {
 				// TODO we might already have one, don't need to fetch both every time
 				// but this rarely runs
-				this.getRecs(home, learning);
+				this.getRecs(home, away);
 			}
 		}
 	}
@@ -64,26 +64,23 @@ class ArticleSelector extends React.Component{
 	}
 
 	change(event) {
-		console.log('set ' + event.target.name + ' to ' + event.target.value);
 		this.setState({[event.target.name]:event.target.value});
 		let lang, other;
 		if (event.target.name == 'homeSearch') {
 			lang = this.props.prefs.home;
-			other = this.props.prefs.learning;
+			other = this.props.prefs.away;
 		}
 		else {
-			lang = this.props.prefs.learning;
+			lang = this.props.prefs.away;
 			other = this.props.prefs.home;
 		}
 
 		if (!this.state.available_articles[lang]) {
-			console.log(this.state);
 			return; // we're still waiting on available_articles from server
 		}
 		let results = [];
 		let guess = event.target.value;
 		while (results.length < 1) {
-			console.log('Guess: ',guess);
 			if (guess.length <1) {
 				break;
 			}
@@ -91,39 +88,36 @@ class ArticleSelector extends React.Component{
 				return s.toLowerCase().indexOf(guess.toLowerCase()) > -1 
 				&& !results.includes(s);
 			});
-			console.log('available_articles:',available_articles);
 			results.push(...available_articles);
 			guess = guess.substring(0,guess.length-1);
 		}
-		// we only store suggestions is user's learning language
-		// if we're finding recs from a home-lang search, find and store corresponding learning-lang titles
+		// we only store suggestions is user's away language
+		// if we're finding recs from a home-lang search, find and store corresponding away-lang titles
 		if (lang==this.props.prefs.home) {
 			results = results.map(home_title => {
 				let index = this.state.available_articles[lang].indexOf(home_title);
-				return this.state.available_articles[this.props.prefs.learning][index];
+				return this.state.available_articles[this.props.prefs.away][index];
 			})
 		}
 		this.setState({suggestions:results});
 	}
 	searchWiki(term) {
 		if (!term) {
-			term = this.state.learningSearch;
+			term = this.state.awaySearch;
 		}
-		console.log(term);
-        Wikipedia.getWikiArray(term, this.props.prefs.learning)
+        Wikipedia.getWikiArray(term, this.props.prefs.away)
             .then(arr => this.setState({results: arr}));
 	}
-	readerLink(learning, home) {
-		let linkContent = learning;
+	readerLink(away, home) {
+		let linkContent = away;
 		if (home) {
 			linkContent += "  (" + home +  ")";
 		}
-		console.log(home, linkContent);
-		return <a href="#" onClick={(e)=>this.onReaderLinkClick(e,learning)}>{linkContent}</a>
+		return <a href="#" onClick={(e)=>this.onReaderLinkClick(e,away)}>{linkContent}</a>
 	}
 	getReaderLinks() {
 		let home = this.props.prefs.home;
-		let learning = this.props.prefs.learning;
+		let away = this.props.prefs.away;
 		let suggestions = this.state.suggestions;
 		if (!suggestions || suggestions.length < 1) {
 			// there are no suggestions - user has not searched anything
@@ -132,14 +126,13 @@ class ArticleSelector extends React.Component{
 		}
 		let link_count = 5;
 		let titles = suggestions.slice(0,link_count);
-		console.log(titles);
 		let links = titles.map(title => {
 			if (!this.state.both_lang_suggestions) {
 				return <li key={uuid()}>{this.readerLink(title,null)}</li>;
 			}
 			else {
 				// we have to find corresponding home-language title
-				let index = this.state.available_articles[learning].indexOf(title);
+				let index = this.state.available_articles[away].indexOf(title);
 				let home_title = this.state.available_articles[home][index];
 				return <li key={uuid()}>{this.readerLink(title, home_title)}</li>;
 			}
@@ -151,7 +144,6 @@ class ArticleSelector extends React.Component{
 		this.searchWiki(term);
 	}
 	render() {
-		console.log(this.state.both_lang_suggestions);
 		if (!this.props.prefs) return <div>I don't know what languages you're working with!</div>;
 		return (
 		<div>
@@ -167,11 +159,11 @@ class ArticleSelector extends React.Component{
 				type='text' />
 
 				<input
-				value={this.state.learningSearch}
+				value={this.state.awaySearch}
 				onChange={this.change.bind(this)} 
-				placeholder={"search in " + abbrToName[this.props.prefs.learning]}
+				placeholder={"search in " + abbrToName[this.props.prefs.away]}
 				className='search_input' 
-				name='learningSearch' 
+				name='awaySearch' 
 				autoComplete="off"
 				type='text' />
 				<button onClick={(ev)=>this.searchWiki()}>search</button>

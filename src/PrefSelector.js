@@ -1,6 +1,6 @@
 /* Preference Selector 
 I speak ___
-I'm learning ___ 
+I'm away ___ 
 with dropdowns for languages.
 */
 import React from 'react';
@@ -10,19 +10,19 @@ import store from './store';
 class PrefSelector extends React.Component{
 	constructor(props) {
 		super(props);
-		this.state = {home:props.prefs.home, learning:props.prefs.learning, invalid:false};
+		this.state = {home:props.prefs.home, away:props.prefs.away, invalid:false};
 	}
     change(event) {
         let val = event.target.value;
         let changed = event.target.name;
-        let other = changed==='home'?'learning':'home';
+        let other = changed==='home'?'away':'home';
         this.setState( { 
             [changed]: val, 
             invalid: (val===this.state[other])
         });
     }
     save() {
-    	let newPrefs = {home:this.state.home, learning:this.state.learning};
+    	let newPrefs = {home:this.state.home, away:this.state.away};
     	this.props.firebase.setPrefs(newPrefs);	
     	store.dispatch({type:"GOT_PREFS", payload:newPrefs});
     }
@@ -42,7 +42,7 @@ class PrefSelector extends React.Component{
 
 				<div>
 					<label> I'm learning:</label>
-					<select value={this.state.learning} onChange={this.change.bind(this)} className="" name="learning">
+					<select value={this.state.away} onChange={this.change.bind(this)} className="" name="away">
 						{languages.map((lang,i) =>  (
 							<option key={i} value={lang.abbr}>
 								 	{lang.full}

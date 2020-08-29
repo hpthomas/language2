@@ -21,7 +21,7 @@ class Demo extends React.Component{
 	render() {
 		// we need a key prop for PrefSelector that changes whenever its props will change
 		// and forces it to re-run the constructor.
-		let langs = this.props.prefs.home + this.props.prefs.learning;
+		let langs = this.props.prefs.home + this.props.prefs.away;
 		return (
 			<div>
 				<PrefSelector key={langs}/>

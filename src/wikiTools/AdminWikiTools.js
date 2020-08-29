@@ -14,13 +14,16 @@ class AdminWikiTools extends React.Component {
 		articles = articles.map (link => 
 			({
 				url: link,
-				name: link.substring(30,link.length),
+				name: link.substring(30,link.length).replace(/_/g,' '),
 				langs: Object.fromEntries(languages.map(l=>[l,null])),
 				all:false,
 			}));
+		console.log('SET ARTICLES TO:');
+		console.log(articles);
 		this.state = {articles:articles, selected:null, recs:null};
 	}
-	//TODO: separate into methods or something, this is a nightmare 
+	// This is where we request wikipedia languages and parse the results
+	// TODO why did I do this in componentDidMount....;
 	componentDidMount() {
 		let promises = this.state.articles.map(link=>Wikipedia.getLangAvails(link.name).then(res=>res.json()));
 		Promise.all(promises)
@@ -39,7 +42,7 @@ class AdminWikiTools extends React.Component {
 			// loop through articles
 			for (var i = 0; i < langdata.length;i++) {
 				if (langdata[i]){
-					// langs for article maps lang to name_in_lang for each lang its available in
+					// langs_for_article maps lang to name_in_lang for each lang its available in
 					let langs_for_article = Object.fromEntries(langdata[i].map(l=>[l.lang,l['*']]));
 					let count=0;
 					languages.forEach(lang=>{
@@ -49,9 +52,6 @@ class AdminWikiTools extends React.Component {
 						}
 					});
 					articles[i].all = (count == languages.length);
-				}
-				else {
-
 				}
 			}
 			this.setState(({articles:articles}));
@@ -63,6 +63,7 @@ class AdminWikiTools extends React.Component {
 	}
 	render() {
 		let links=  this.state.articles.slice(0,50);
+		//console.log(this.state);window.s=this.state;
 		return (
 			<div className="adminWikiTools"> 
 				<h1>Admin Tools</h1>
@@ -127,7 +128,7 @@ class AdminWikiTools extends React.Component {
 		languages.forEach(language=>{
 			result[language] = recs.map(rec=>rec.langs[language]);
 		})
-		console.log(result);
+		//console.log(result);
 		this.props.firebase.setArticleRecs(result);
 	}
 	populateRecs() {

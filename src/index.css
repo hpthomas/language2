@@ -31,6 +31,10 @@ ul {
   font-size:0.9em;
   font-family: sans-serif;
 }
+.gridParent{
+  display:grid;
+  grid-template-columns: 60% 40%;
+}
 .linkSelector span {
      cursor:pointer;
      color:blue;

@@ -69,11 +69,9 @@ class Firebase {
 	setPrefs = (newPrefs) => {
 		if (!this.auth.currentUser) return null;
 		let prefs = this.db.ref('/users/' + this.auth.currentUser.uid + '/prefs');
-        console.log(newPrefs);
 		prefs.update(newPrefs);
 	}
 	translate = (text, source, target) => {
-		console.log(text,source,target);
 		let params = {text: text, source:source, target:target};
 		return this.functions.httpsCallable('translate')(params);
 	}

@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import Firebase from './Firebase';
 
-let defaultPrefs = {home:"en",learning:"es"};
+let defaultPrefs = {home:"en",away:"es"};
 
 function mainReducer(state, action) {
 	switch (action.type) {
@@ -11,7 +11,7 @@ function mainReducer(state, action) {
 			return {...state, user:null}
 		case 'GOT_PREFS':
 			console.log('got prefs');
-			if (!action.payload || !action.payload.home || !action.payload.learning) {
+			if (!action.payload || !action.payload.home || !action.payload.away) {
 				console.log('BAD ONES!');
 				// we've got invalid prefs! this is fine
 				// they were set in old version with different names, or I deleted the database

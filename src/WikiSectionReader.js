@@ -9,7 +9,7 @@ class WikiSectionReader extends React.Component {
 
 	translate(event) {
 		this.setState({showTranslation: !this.state.showTranslation});
-		this.props.firebase.translate(this.props.data.text, this.props.prefs.learning,this.props.prefs.home)
+		this.props.firebase.translate(this.props.data.text, this.props.prefs.away,this.props.prefs.home)
 		.then(response => response.data)
 		.then(t=>{
 			if (t.err) {
