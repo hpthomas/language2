@@ -15,7 +15,6 @@ import {abbrToName} from './Languages';
 
 class ArticleSelector extends React.Component{
 	constructor(props) {
-		console.log(props);
 		super(props);
 		this.state = {
 			homeSearch:"",
@@ -67,7 +66,6 @@ class ArticleSelector extends React.Component{
 	}
 
 	change(event) {
-		console.log(this.state.available_articles);
 		this.setState({[event.target.name]:event.target.value});
 		let lang = event.target.name==='homeSearch' ? this.props.prefs.home 
 			: this.props.prefs.away;
@@ -92,7 +90,6 @@ class ArticleSelector extends React.Component{
 			}
 			guess = guess.substring(0,guess.length-1);
 		}
-		console.log('done');console.log(results);
 		// we only store suggestions is user's away language
 		// if we're finding recs from a home-lang search, find and store corresponding away-lang titles
 		if (lang===this.props.prefs.home) {

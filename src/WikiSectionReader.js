@@ -7,7 +7,11 @@ class WikiSectionReader extends React.Component {
 		super(props);
 		this.state = {cachedTranslation: null, showTranslation:false, status:props.status};
 	}
-
+	componentDidUpdate(prevProps,prevState) {
+		if (this.props.user !== prevProps.user) {
+			this.setState({cachedTranslation:null, showTranslation:false});
+		}
+	}
 	toggleTranslate(event) {
 		// we only need to fetch translation, etc. if we're showing, not if we're hiding
 		if (this.state.showTranslation) {
@@ -28,7 +32,10 @@ class WikiSectionReader extends React.Component {
 			if (t.err) {
 				throw t.err;
 			}
-			this.setState({cachedTranslation: t});
+			// setting showTranslation to true is usually not needed
+			// but makes sure if user clicks 'login as guest' they see that translation
+			// even though login action resets cached/show
+			this.setState({cachedTranslation: t, showTranslation:true});
 		})
 		.catch(error=>{
 			if (error === 'quota reached') {
@@ -36,8 +43,6 @@ class WikiSectionReader extends React.Component {
 				this.setState({cachedTranslation: msg});
 			}
 			else if (error === 'not authenticated'){
-				let msg = "Please log in to view translations. If you are already logged in, this is an error.";
-				this.setState({cachedTranslation: msg});
 			}
 			else {
 				console.log('unknown error');

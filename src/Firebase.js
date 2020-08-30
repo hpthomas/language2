@@ -91,8 +91,6 @@ class Firebase {
 	setArticleRevision = (term, lang, revision) => {
 		let safe_name = this.makeKeySafeName(term);
 		let update = {[safe_name]:revision};
-		console.log('set')
-		console.log(update);
 		return this.db.ref('/article_revisions/' + lang).update(update);
 	}
 
