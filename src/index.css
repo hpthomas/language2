@@ -2,6 +2,15 @@ ul {
   list-style:none;
 }
 
+.linkButton {
+  background:none;
+  border:none;
+  padding:0;
+  color:#0645AD;
+  text-decoration:underline;
+  cursor:pointer;
+  font-size:inherit;
+}
 .article_links {
   display:flex;
   flex-direction:row;
@@ -35,6 +44,7 @@ ul {
 }
 .reader-main {
   width:400px;
+  margin-right:20px;
 }
 .reader-translate-button {
   width:120px;
@@ -43,6 +53,7 @@ ul {
   width:100px;
 }
 .reader-translation {
+  margin-left:25px;
   width:400px;
 }
 .adminWikiTools {

@@ -13,11 +13,6 @@ import ReaderPage from './ReaderPage';
 import AdminWikiTools from './wikiTools/AdminWikiTools';
 import store from './store';
 class TopBar extends React.Component{
-
-	constructor(props) {
-		super(props);
-	}
-
 	logOut(){
 		this.props.firebase.logOut();
 		// dispatch logout success action without waiting for confirmation - this is fine I think
@@ -44,7 +39,7 @@ class TopBar extends React.Component{
 								</Link>
 							</li>
 
-							{ this.props.user && this.props.user.uid=='Gw83uZdDAQZD9Evc38RPN1vwp0u2'?
+							{ this.props.user && this.props.user.uid==='Gw83uZdDAQZD9Evc38RPN1vwp0u2'?
 								<li className='about_top_link'>
 									<Link to={'/wikitools'}>
 										Wiki Tools	

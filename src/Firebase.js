@@ -97,11 +97,13 @@ class Firebase {
 	}
 
 	getUserArticleHistory = (term,lang) => {
+		if (!this.auth.currentUser) return Promise.resolve(null);
 		let safe_name = this.makeKeySafeName(term);
 		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + safe_name;
 		return this.db.ref(path).once('value');
 	}
 	setUserArticleHistorySection(term, lang, sectionIndex, status) {
+		if (!this.auth.currentUser) return Promise.resolve(null);
 		let safe_name = this.makeKeySafeName(term);
 		let path = '/users/' + this.auth.currentUser.uid + '/articleHstories/' + lang + '/' + safe_name;
 		let update = {[sectionIndex]:status};
@@ -109,7 +111,7 @@ class Firebase {
 	}
 	makeKeySafeName(term) {
 		// strip out dot, hash, dollar, brackets 
- 		let re =  /(\.|\$|\[|\]|\#)/g ;
+ 		let re =  /(\.|\$|\[|\]|#)/g ;
 		return term.replace(re,'');
 	}
 }

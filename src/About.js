@@ -1,9 +1,9 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import store from './store';
+import {Link, withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+
 class About extends React.Component{
-	constructor(props) {
-		super(props);
-	}
 	render() {
 		return (
 			<div>
@@ -16,10 +16,23 @@ class About extends React.Component{
 					Try to read as much as you can without translating!
 				</p>
 
-				<p>
-					To view translations, you must first <Link to='/login'> Log In</Link>.
-				</p>
+				{(!this.props.user) &&
+					<p>
+						To view translations, you must first <Link to='/login'> Log In</Link> or 
+						<button className='linkButton' onClick={ev=>this.guestLogin(ev)}> Continue as a Guest</button>.
+					</p>
+				}
+
 			</div>);
 	}
+	guestLogin(ev) {
+		ev.preventDefault();
+		this.props.firebase.login(null,null)
+		.then(res=>{
+			store.dispatch({type:"LOGGED_IN", payload:res.user});
+			this.props.history.push('/');
+		})
+	}
 }
-export default About;
+let mstp = state => ({firebase:state.firebase, user:state.user});
+export default withRouter(connect(mstp)(About));

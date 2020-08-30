@@ -8,18 +8,20 @@ If logged in, this is the user's profile/'home' page, showing:
 
 */
 import React from 'react';
-import Demo from './Demo';
+import PrefSelector from './PrefSelector';
+import ArticleSelector from './ArticleSelector';
 import {connect} from 'react-redux';
 
 class Home extends React.Component{
-	constructor(props) {
-		super(props);
-	}
 	render() {
-		if (!this.props.user) {
-			return <Demo />;
-		}
-		return <div>welcome back! <Demo /> </div>;
+		// we need a key prop for PrefSelector that changes whenever its props will change
+		// and forces it to re-run the constructor.
+		let langs = this.props.prefs? this.props.prefs.home + this.props.prefs.away : "noprefs";
+		return (
+			<div>
+				<PrefSelector key={langs}/>
+				<ArticleSelector demo_specific_stuff={true} />
+			</div>);
 	}
 }
 let mstp = state => {

@@ -9,7 +9,7 @@ class LinkSelector extends React.Component {
 			<div className="linkSelector">
 				{this.props.options.map(option => (
 					<span key={uuid()}
-					className={option==this.props.selected? "selectedLink" : ""}
+					className={option===this.props.selected? "selectedLink" : ""}
 					onClick={this.change.bind(this, option)}>
 
 						{option}

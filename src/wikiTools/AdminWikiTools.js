@@ -22,35 +22,45 @@ class AdminWikiTools extends React.Component {
 		this.state = {articles:articles, selected:null, recs:null};
 	}
 	// This is where we request wikipedia languages and parse the results
-	// TODO why did I do this in componentDidMount....;
 	componentDidMount() {
-		let promises = this.state.articles.map(link=>this.props.wikipedia.getLangAvails(link.name).then(res=>res.json()));
+		let promises = this.state.articles
+			.map(link=>this.props.wikipedia.getLangAvails(link.name)
+			.then(res=>res.json()));
+
 		Promise.all(promises)
-		.then(responses=>responses.map(response=>{
-		    try {
-		        let page = response['query']['pages'];
-		        let res =  page[Object.keys(page)[0]]['langlinks'];
-				return res;
-		    }
-		    catch (error) {
-		    	return null;
-		    }
-		}))
+		.then(responses=>{
+			return responses.map(response=>{
+			    try {
+			        let page = response['query']['pages'];
+			        let res =  page[Object.keys(page)[0]]['langlinks'];
+					return res;
+			    }
+			    catch (error) {
+			    	return null;
+			    }
+			});
+		})
 		.then(langdata=>{
 			let articles = this.state.articles.slice(0);
-			// loop through articles
+			// for each article
 			for (var i = 0; i < langdata.length;i++) {
+				// if links to other language versions are present for article
 				if (langdata[i]){
-					// langs_for_article maps lang to name_in_lang for each lang its available in
-					let langs_for_article = Object.fromEntries(langdata[i].map(l=>[l.lang,l['*']]));
+					// read lang links into array of [language,article name in language]
+					let article_names =  langdata[i].map(l=>[l.lang,l['*']])
+					// turn article_names into dict of {lang:name}
+					let langs_for_article = Object.fromEntries(article_names);
+
+					// save into articles array with count of lang availability
 					let count=0;
-					languages.forEach(lang=>{
+					for (var l = 0; l<languages.length; l++){
+						let lang = languages[l]
 						if (langs_for_article[lang]) {
 							articles[i].langs[lang]=langs_for_article[lang];
 							count+=1;
 						}
-					});
-					articles[i].all = (count == languages.length);
+					}
+					articles[i].all = (count === languages.length);
 				}
 			}
 			this.setState(({articles:articles}));
@@ -108,7 +118,7 @@ class AdminWikiTools extends React.Component {
 								{this.state.recs.map(rec=>
 									<tr key={uuid()}>
 										<td>{rec.englishName}</td>
-										<td>{Object.keys(rec.langs).length==languages.length?"Y":"N"}</td>
+										<td>{Object.keys(rec.langs).length===languages.length?"Y":"N"}</td>
 									</tr> )
 								}
 							</tbody>
@@ -140,7 +150,7 @@ class AdminWikiTools extends React.Component {
 	}
 }
 let LinkToArticle = (props) => {
-	if (props.name=='-') return <span>-</span>
+	if (props.name==='-') return <span>-</span>
 	let url = "https://" + props.lang + ".wikipedia.org/wiki/" + encodeURIComponent(props.name);
 	return <a href={url}>{props.lang}</a>
 }

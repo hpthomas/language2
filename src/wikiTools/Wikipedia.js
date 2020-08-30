@@ -1,4 +1,3 @@
-import {connect} from 'react-redux';
 class Wikipedia {
 	constructor(firebase) {
 		this.firebase=firebase;
@@ -73,7 +72,7 @@ class Wikipedia {
 	getCleanText(element) {
 		let children = element.children;
 		Array.from(children).forEach(childElement => {
-			if (childElement.nodeName.toLowerCase() == 'style') {
+			if (childElement.nodeName.toLowerCase() === 'style') {
 				element.removeChild(childElement);
 			}
 		})
@@ -101,7 +100,7 @@ class Wikipedia {
 				let element = elements[i];
 				if (element.nodeName.toUpperCase() === "P" || element.nodeName[0].toUpperCase()==="H") {
 					// look through children for a style tag and get rid of it
-					if (i==3) window.e=element;
+					if (i===3) window.e=element;
 					let clean_text = this.getCleanText(element);
 					if (clean_text.length > 3) {
 						let section = {tag:element.nodeName, text:clean_text};

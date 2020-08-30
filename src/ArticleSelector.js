@@ -15,8 +15,8 @@ import {abbrToName} from './Languages';
 
 class ArticleSelector extends React.Component{
 	constructor(props) {
+		console.log(props);
 		super(props);
-		let available_articles = {};
 		this.state = {
 			homeSearch:"",
 			awaySearch:"",
@@ -29,9 +29,13 @@ class ArticleSelector extends React.Component{
 	toggleBothLangs() {
 		this.setState({both_lang_suggestions: !this.state.both_lang_suggestions})
 	}
-
+	componentDidMount() {
+		let home = this.props.prefs.home;
+		let away = this.props.prefs.away;
+		this.getRecs(home, away);
+	}
 	componentDidUpdate(prevProps, prevState) {
-		if (this.props.prefs != prevProps.prefs){
+		if (this.props.prefs !== prevProps.prefs){
 			let home = this.props.prefs.home;
 			let away = this.props.prefs.away;
 			this.setState({homeSearch:'',awaySearch:'',suggestions:'', finalTerm:null})
@@ -63,36 +67,35 @@ class ArticleSelector extends React.Component{
 	}
 
 	change(event) {
+		console.log(this.state.available_articles);
 		this.setState({[event.target.name]:event.target.value});
-		let lang, other;
-		if (event.target.name == 'homeSearch') {
-			lang = this.props.prefs.home;
-			other = this.props.prefs.away;
-		}
-		else {
-			lang = this.props.prefs.away;
-			other = this.props.prefs.home;
-		}
+		let lang = event.target.name==='homeSearch' ? this.props.prefs.home 
+			: this.props.prefs.away;
 
 		if (!this.state.available_articles[lang]) {
 			return; // we're still waiting on available_articles from server
 		}
+
 		let results = [];
 		let guess = event.target.value;
 		while (results.length < 1) {
 			if (guess.length <1) {
 				break;
 			}
-			let available_articles = this.state.available_articles[lang].filter(s=>{
-				return s.toLowerCase().indexOf(guess.toLowerCase()) > -1 
-				&& !results.includes(s);
-			});
-			results.push(...available_articles);
+			let available_articles = this.state.available_articles[lang];
+			for (var i = 0; i<available_articles.length; i++){
+				let article_name = available_articles[i];
+				let match = article_name.toLowerCase().indexOf(guess.toLowerCase()) > -1;
+				if (match && !results.includes(article_name)) {
+					results.push(article_name);
+				}
+			}
 			guess = guess.substring(0,guess.length-1);
 		}
+		console.log('done');console.log(results);
 		// we only store suggestions is user's away language
 		// if we're finding recs from a home-lang search, find and store corresponding away-lang titles
-		if (lang==this.props.prefs.home) {
+		if (lang===this.props.prefs.home) {
 			results = results.map(home_title => {
 				let index = this.state.available_articles[lang].indexOf(home_title);
 				return this.state.available_articles[this.props.prefs.away][index];
@@ -111,7 +114,7 @@ class ArticleSelector extends React.Component{
 		if (home) {
 			linkContent += "  (" + home +  ")";
 		}
-		return <a href="#" onClick={(e)=>this.onReaderLinkClick(e,away)}>{linkContent}</a>
+		return <button className='linkButton' onClick={(e)=>this.onReaderLinkClick(e,away)}>{linkContent}</button>
 	}
 	getReaderLinks() {
 		let home = this.props.prefs.home;
@@ -120,7 +123,7 @@ class ArticleSelector extends React.Component{
 		if (!suggestions || suggestions.length < 1) {
 			// there are no suggestions - user has not searched anything
 			// TODO show most popular articles, or random choices
-			return this.readerLink('Chicago')
+			return <ul className='article_links'>{this.readerLink('Chicago')}</ul>
 		}
 		let link_count = 5;
 		let titles = suggestions.slice(0,link_count);

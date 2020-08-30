@@ -17,7 +17,7 @@ class ArticleReader extends React.Component{
 	// if items is new, update everything and fetch new results
 	componentDidUpdate() {
 		// if term has changed, fetch the new article and the user's history
-		if (this.props.term != this.state.term) {
+		if (this.props.term !== this.state.term) {
 
 			this.setState({term:this.props.term,items:[]});
 			if (!this.props.term) {
@@ -27,7 +27,7 @@ class ArticleReader extends React.Component{
 	            .then(arr => this.setState({items: arr}));
 
 	        this.props.firebase.getUserArticleHistory(this.props.term, this.props.prefs.away)
-	        	.then(res=>res.val())
+	        	.then(res=>res ? res.val() : [])
 	        	.then(history=> this.setState({userArticleHistory:history}));
 		}
 	}

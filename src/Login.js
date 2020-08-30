@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import store from './store';
 
@@ -11,18 +11,26 @@ class LoginForm extends React.Component {
 	submit(event) {
 		event.preventDefault();
 		this.props.firebase.login(this.state.email, this.state.pass)
-			.then(res=>{
-				store.dispatch({type:"LOGGED_IN", payload:res.user});
-				this.setState({email:"",pass:""});
-				this.props.firebase.getPrefs().then(res=>{
-					let saved_prefs = res.val();
-					this.props.history.push("/");	
-					store.dispatch({type:"GOT_PREFS", payload:saved_prefs});
-				})
+		.then(res=>{
+			store.dispatch({type:"LOGGED_IN", payload:res.user});
+			this.setState({email:"",pass:""});
+			this.props.firebase.getPrefs().then(res=>{
+				let saved_prefs = res.val();
+				this.props.history.push("/");	
+				store.dispatch({type:"GOT_PREFS", payload:saved_prefs});
 			})
-			.catch(error=>{
-				this.setState({error:error});
-			});
+		})
+		.catch(error=>{
+			this.setState({error:error});
+		});
+	}
+	guestLogin(event) {
+		event.preventDefault();
+		this.props.firebase.login(null,null)
+		.then(res=>{
+			store.dispatch({type:"LOGGED_IN", payload:res.user});
+			this.props.history.push("/");	
+		});
 	}
 	change(event) {
 		this.setState({[event.target.name]:event.target.value});
@@ -36,9 +44,10 @@ class LoginForm extends React.Component {
 				<label> Password: </label>
 				<input type="password" name="pass" className="" value={this.state.pass} onChange={this.change.bind(this)}/>
 				<p></p>
-				<button className="form-control">submit</button>
+				<button className="">submit</button>
 				{this.state.error? <p>{this.state.error.message}</p> : null }
 			</form>
+			<button className="" onClick={this.guestLogin.bind(this)}>continue as guest</button>
 		</div>);
 	}
 }
