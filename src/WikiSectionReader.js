@@ -52,6 +52,20 @@ class WikiSectionReader extends React.Component {
 			}
 		})
 	}
+	toggleDone(event){
+		let status = this.state.status;
+		console.log(status);
+		if (status == 'done'){
+			console.log('undo');
+			this.props.updateStatus(null);
+			this.setState({status:'',showTranslation:false});
+		}
+		else {
+			console.log('do');
+			this.props.updateStatus('done');
+			this.setState({status:'done',showTranslation:false});
+		}
+	}
 	markDone(event){
 		this.props.updateStatus('done');
 		this.setState({status:'done',showTranslation:false});
@@ -81,15 +95,15 @@ class WikiSectionReader extends React.Component {
 				<div className={"reader-status " + (this.state.status || "no-status")}>
 					{this.state.status || ""}
 				</div>
-				<div className="reader-main">
+				<div className="reader-main" onClick={this.toggleDone.bind(this)}>
 					<Tag>{this.props.data.text}</Tag>
 				</div>
 				<div className="reader-translate-button">
 					<button onClick={this.toggleTranslate.bind(this)}>
 						{this.state.showTranslation? "hide" : "translate"}
 					</button>
-					<button onClick={this.markDone.bind(this)}>
-						Done
+					<button onClick={this.toggleDone.bind(this)}>
+						{this.state.status=='done'? 'clear' : 'done'}
 					</button>
 				</div>
 				<div className="reader-translation">
