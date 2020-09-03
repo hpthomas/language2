@@ -53,22 +53,13 @@ class WikiSectionReader extends React.Component {
 		})
 	}
 	toggleDone(event){
-		let status = this.state.status;
-		console.log(status);
+		let status = this.props.status;
 		if (status == 'done'){
-			console.log('undo');
 			this.props.updateStatus(null);
-			this.setState({status:'',showTranslation:false});
 		}
 		else {
-			console.log('do');
 			this.props.updateStatus('done');
-			this.setState({status:'done',showTranslation:false});
 		}
-	}
-	markDone(event){
-		this.props.updateStatus('done');
-		this.setState({status:'done',showTranslation:false});
 	}
 	guestLogin() {
 		return this.props.firebase.login(null,null)
@@ -92,8 +83,8 @@ class WikiSectionReader extends React.Component {
 		}
 		return (
 			<div className={"reader-item"}>
-				<div className={"reader-status " + (this.state.status || "no-status")}>
-					{this.state.status || ""}
+				<div className={"reader-status " + (this.props.status || "no-status")}>
+					{this.props.status || ""}
 				</div>
 				<div className="reader-main" onClick={this.toggleDone.bind(this)}>
 					<Tag>{this.props.data.text}</Tag>
@@ -103,7 +94,7 @@ class WikiSectionReader extends React.Component {
 						{this.state.showTranslation? "hide" : "translate"}
 					</button>
 					<button onClick={this.toggleDone.bind(this)}>
-						{this.state.status=='done'? 'clear' : 'done'}
+						{this.props.status=='done'? 'clear' : 'done'}
 					</button>
 				</div>
 				<div className="reader-translation">

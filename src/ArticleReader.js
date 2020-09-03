@@ -36,15 +36,42 @@ class ArticleReader extends React.Component{
 		let term = this.state.term;
 		let lang = this.props.prefs.away;
 		this.props.firebase.setUserArticleHistorySection(term, lang, index, status);
+		let newHist = {...this.state.userArticleHistory};
+		newHist[index] = status;
+		this.setState({userArticleHistory:newHist});
+	}
+	completionStats(historyObject, items) {
+		if (!historyObject || !items) {
+			return '';
+		}
+		//TODO make this a utility method and use for user page
+		let complete_sections = Object.keys(historyObject)
+			.filter(sectionID => historyObject[sectionID]=='done');
+		let percent_complete = complete_sections.length / items.length;
+		let formatted_percent_complete = 
+			percent_complete.toLocaleString(undefined, {style:'percent',minimumFractionDigits:2});
+
+		let translated_sections = Object.keys(historyObject)
+			.filter(sectionID => historyObject[sectionID]=='translated');
+		let percent_translated = translated_sections.length / items.length;
+		let formatted_percent_translated = 
+			percent_translated.toLocaleString(undefined, {style:'percent',minimumFractionDigits:2});
+
+		return `${formatted_percent_complete} complete, ${formatted_percent_translated} translated`;
 	}
 	render() {
 		// in case we have no histories yet, use empty object
 		let history = this.state.userArticleHistory || {};
+		let complete_message = this.completionStats(history, this.state.items);
 		return (!this.state.items)? null : 
 		( 
 			<ul className="">
+				<li>
+					<h2>{this.state.term}</h2>
+					<h3>{complete_message}</h3>
+				</li>
 			{this.state.items.map((item,index) => 
-				<li key={uuid()} className="">
+				<li key={index} className="">
 					<WikiSectionReader 
 						data={item} 
 						section_index={index} 
